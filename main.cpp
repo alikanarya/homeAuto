@@ -122,7 +122,7 @@ int main(int argc, char *argv[]){
 
     QTimer *timerTemperature = new QTimer();
     QObject::connect(timerTemperature, SIGNAL(timeout()), &startX, SLOT(rungpioDS18B20()));
-    timerTemperature->start(6000);
+    timerTemperature->start(600000);
 
     return app.exec();
 }

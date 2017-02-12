@@ -111,7 +111,7 @@ void dataThread::connectToDB(){
 
         }
 
-        cmd = QString( "INSERT INTO %1 (date, time, temp) VALUES ('%2', '%3', -1)" ).arg(tableNames[8]).arg(dateInfo).arg(timeInfo);
+        cmd = QString( "INSERT INTO %1 (date, time, temp) VALUES ('%2', '%3', -99)" ).arg(tableNames[8]).arg(dateInfo).arg(timeInfo);
         //qDebug() << cmd.toUtf8().constData();
 
         qry.prepare( cmd );

@@ -54,7 +54,8 @@ public:
     int aInpArr[aInpSize];
     int aOutArr[dOutSize];
 
-    int dInpGpioMap[dInpSize] = {45, 44, 26, 47, 46, 27, 65, 61};
+//    int dInpGpioMap[dInpSize] = {45, 44, 26, 47, 46, 27, 65, 61};
+    int dInpGpioMap[dInpSize] = {45, 44, 27, 47, 46, 26, 65, 61}; // error in circuit of 27, cable connection was moved to cct of 26
     int dOutGpioMap[dOutSize] = {66, 67, 69, 68};
 
     bool writeEnable = false;

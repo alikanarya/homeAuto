@@ -61,6 +61,7 @@ public:
     bool writeEnable = false;
 
     QString pwmchip0;
+    QString pwmchip0_No;
     QString PWMCHIP0_PATH = "/sys/class/pwm/";
     QString PWMCHIP0_EXPORT = "";
     QString PWMCHIP0_P0_ENABLE = "";
@@ -71,6 +72,7 @@ public:
     QString PWMCHIP0_P1_DUTYCYCLE = "";
 
     QString pwmchip1;
+    QString pwmchip1_No;
     QString PWMCHIP1_PATH = "/sys/class/pwm/";
     QString PWMCHIP1_EXPORT = "";
     QString PWMCHIP1_P0_ENABLE = "";

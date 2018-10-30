@@ -22,7 +22,7 @@ public:
     void stop();
     int pinExport(QString path, int pinNo);
     int pinDirection(int pinNo, QString pinDir);
-    int pinRead(int pinNo);
+    int pinRead(int pinNo, bool showMsg = true);
     int pinWrite(int pinNo, char *value);
     int pwmPeriod(int chip, int pinNo, int value);
     int pwmDutyCycle(int chip, int pinNo, int value);

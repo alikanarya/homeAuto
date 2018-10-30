@@ -27,15 +27,39 @@ gpioThread::gpioThread(){
 
     for (int i = 0; i < aInpSize; i++) aInpArr[i] = 0;
 
+    bool exportStatus = false;
+    for (int i = 0; i < dInpSize; i++) {
+        if (pinRead(dInpGpioMap[i], false) != -1) {
+            exportStatus = true;
+            //cout << "pin in already exported" << endl;
+        }
+        if (!exportStatus) {
+            //cout << "pin in will be exported" << endl;
+            pinExport( "/sys/class/gpio/export", dInpGpioMap[i] );
+        }
+        exportStatus = false;
+    }
+
+    exportStatus = false;
+    for (int i = 0; i < dOutSize; i++) {
+        if (pinRead(dOutGpioMap[i], false) != -1) {
+            exportStatus = true;
+            //cout << "pin out already exported" << endl;
+        }
+        if (!exportStatus) {
+            //cout << "pin out will be exported" << endl;
+            pinExport( "/sys/class/gpio/export", dOutGpioMap[i] );
+        }
+        exportStatus = false;
+    }
+
 
 
     for (int i = 0; i < dInpSize; i++) {
-        pinExport( "/sys/class/gpio/export", dInpGpioMap[i] );
         pinDirection( dInpGpioMap[i], "in" );
     }
 
     for (int i = 0; i < dOutSize; i++) {
-        pinExport( "/sys/class/gpio/export", dOutGpioMap[i] );
         pinDirection( dOutGpioMap[i], "out" );
     }
 
@@ -254,13 +278,13 @@ int gpioThread::pinDirection(int pinNo, QString pinDir){
     return 0;
 }
 
-int gpioThread::pinRead(int pinNo){
+int gpioThread::pinRead(int pinNo, bool showMsg){
 
     //Read in the value of the pin
     sprintf(GPIOValue, "/sys/class/gpio/gpio%d/value", pinNo);
 
     if ((buttonHandle = fopen(GPIOValue, "rb+")) == NULL ){
-        printf("Cannot open value handle:pinRead\n");
+        if (showMsg) printf("Cannot open value handle:pinRead\n");
         return -1;
     }
     fread(&setValue, sizeof(char), 1, buttonHandle);

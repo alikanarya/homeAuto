@@ -2,6 +2,7 @@
 #define CHECKCLIENT_H
 
 #include <QThread>
+#include "client.h"
 
 class checkClient : public QThread {
 
@@ -9,7 +10,9 @@ class checkClient : public QThread {
 
 public:
 
-    checkClient();
+    Client *clientPtr;
+
+    checkClient(Client *_clientPtr);
     ~checkClient();
 
     void stop();

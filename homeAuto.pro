@@ -7,7 +7,7 @@ CONFIG += c++11
 
 TARGET = homeAuto
 target.files = homeAuto
-target.path=/root
+target.path=/root/app
 
 INSTALLS += target
 CONFIG += console

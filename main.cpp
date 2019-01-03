@@ -13,8 +13,8 @@ using namespace std;
 QSettings *settings;                // settings: to read/write ini file
 
 Server *serverx;
-Client *clientx;
-checkClient *checkClientX;
+Client *clientx, *clientForServer1;
+checkClient *checkClientX, *checkClientForServer1;
 gpioThread *gpioX;
 gpioDS18B20 *gpioDS18B20X;
 dataThread *dataX;
@@ -30,6 +30,8 @@ bool readSettings(){
         dbUser = settings->value("dbUser", _DB_USER).toString();
         dbPass = settings->value("dbPass", _DB_PASS).toString();
         ds18b20_SN1 = settings->value("ds18b20_SN1", _DS18B20_SN1).toString();
+        server1Address = settings->value("server1Address", _CLIENT_ADR).toString();
+        server1Port = settings->value("server1Port", _SERVER1_PORT).toInt();
 
         //cout << clientAddress.toUtf8().constData() << endl;
         return true;
@@ -47,15 +49,19 @@ int main(int argc, char *argv[]){
 
     serverx = new Server();
     clientx = new Client();
-    checkClientX = new checkClient();
+    checkClientX = new checkClient(clientx);
     gpioX = new gpioThread();
     gpioDS18B20X = new gpioDS18B20();
     dataX = new dataThread();
     startThr startX;
 
+    clientForServer1 = new Client();
+    checkClientForServer1 = new checkClient(clientForServer1);
+
     settings = new QSettings(INIFILENAME, QSettings::IniFormat);
     readSettings();
     clientx->setHost(clientAddress, clientPort);
+    clientForServer1->setHost(server1Address, server1Port);
 
     if (argc == 1){
 
@@ -104,6 +110,7 @@ int main(int argc, char *argv[]){
     // check client timer
     QTimer *timerCClient = new QTimer();
     QObject::connect(timerCClient, SIGNAL(timeout()), checkClientX, SLOT(connect()));
+    QObject::connect(timerCClient, SIGNAL(timeout()), checkClientForServer1, SLOT(connect()));
     timerCClient->start(1000);
 
     QObject::connect(serverx, SIGNAL(readFinished()), gpioX, SLOT(enableWrite()));

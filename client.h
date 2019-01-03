@@ -29,6 +29,7 @@ public slots:
 
     void startTransfer();
     void connectionEstablished();
+    void readMessage();
 
 private:
 

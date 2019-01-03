@@ -1,15 +1,15 @@
 #include "checkclient.h"
-#include "client.h"
 
 #include <iostream>
 
 using namespace std;
 
-extern Client *clientx;
+//extern Client *clientx;
 
-checkClient::checkClient(){
+checkClient::checkClient(Client *_clientPtr){
 
     stopped = false;
+    clientPtr = _clientPtr;
 }
 
 void checkClient::run(){
@@ -21,13 +21,13 @@ void checkClient::run(){
 
 void checkClient::connect(){
 
-    if (clientx->clientSocket.state() != QAbstractSocket::ConnectingState &&
-        clientx->clientSocket.state() != QAbstractSocket::ConnectedState ){
+    if (clientPtr->clientSocket.state() != QAbstractSocket::ConnectingState &&
+        clientPtr->clientSocket.state() != QAbstractSocket::ConnectedState ){
         //cout << "checkClient" << endl;    //DBG
-        clientx->start();
+        clientPtr->start();
     }
 
-    if (clientx->clientSocket.state() == QAbstractSocket::ConnectedState )
+    if (clientPtr->clientSocket.state() == QAbstractSocket::ConnectedState )
         emit Connected();
     else
         emit notConnected();
@@ -36,8 +36,8 @@ void checkClient::connect(){
 
 void checkClient::transferToTCPServer(){
 
-    if (clientx->clientSocket.state() == QAbstractSocket::ConnectedState)
-        clientx->startTransfer();
+    if (clientPtr->clientSocket.state() == QAbstractSocket::ConnectedState)
+        clientPtr->startTransfer();
 }
 
 void checkClient::stop(){

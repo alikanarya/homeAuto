@@ -28,6 +28,7 @@ public:
 public slots:
 
     void startTransfer();
+    void startTransfer(QByteArray _datagram);
     void connectionEstablished();
     void readMessage();
 
@@ -37,7 +38,7 @@ private:
 signals:
 
     void clientConnected();
-    void messageGot();
+    void messageGot(QByteArray);
 
 };
 

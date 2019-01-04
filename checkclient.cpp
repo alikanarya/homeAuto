@@ -40,6 +40,12 @@ void checkClient::transferToTCPServer(){
         clientPtr->startTransfer();
 }
 
+void checkClient::transferToTCPServer(QByteArray _datagram){
+
+    if (clientPtr->clientSocket.state() == QAbstractSocket::ConnectedState)
+        clientPtr->startTransfer(_datagram);
+}
+
 void checkClient::stop(){
 
     stopped = true;

@@ -116,6 +116,7 @@ int main(int argc, char *argv[]){
     QObject::connect(serverx, SIGNAL(readFinished()), gpioX, SLOT(enableWrite()));
     QObject::connect(gpioX, SIGNAL(gpioOpsFinished()), &startX, SLOT(runRecordData()));
     QObject::connect(gpioX, SIGNAL(gpioOpsOK()), checkClientX, SLOT(transferToTCPServer()));
+    QObject::connect(clientForServer1, SIGNAL(messageGot(QByteArray)), checkClientX, SLOT(transferToTCPServer(QByteArray)));
 
 
     // temperature reading

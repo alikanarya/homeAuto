@@ -21,6 +21,7 @@ public slots:
 
     void connect();
     void transferToTCPServer();
+    void transferToTCPServer(QByteArray _datagram);
 
 protected:
 

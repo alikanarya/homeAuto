@@ -40,6 +40,13 @@ void Client::startTransfer(){
         clientSocket.write(datagram);
 }
 
+void Client::startTransfer(QByteArray _datagram){
+
+    if (clientSocket.state() == QAbstractSocket::ConnectedState)
+        //client.write(MSG_HI.toLatin1().constData(), 9);
+        clientSocket.write(_datagram);
+}
+
 void Client::connectionEstablished(){
 
     connected = true;
@@ -54,6 +61,6 @@ void Client::readMessage() {
         datagram.append(this->clientSocket.readAll());
 
     cout <<  datagram.data() << endl;
-    emit messageGot();
+    emit messageGot(datagram);
 
 }

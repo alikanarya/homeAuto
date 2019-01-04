@@ -54,5 +54,6 @@ void Client::readMessage() {
         datagram.append(this->clientSocket.readAll());
 
     cout <<  datagram.data() << endl;
+    emit messageGot();
 
 }

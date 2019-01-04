@@ -37,6 +37,7 @@ private:
 signals:
 
     void clientConnected();
+    void messageGot();
 
 };
 

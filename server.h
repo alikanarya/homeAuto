@@ -31,6 +31,8 @@ private:
 signals:
 
     void readFinished();
+    void toServer1(QByteArray);
+
 
 };
 

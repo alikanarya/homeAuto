@@ -13,8 +13,8 @@ using namespace std;
 QSettings *settings;                // settings: to read/write ini file
 
 Server *serverx;
-Client *clientx, *clientForServer1;
-checkClient *checkClientX, *checkClientForServer1;
+Client *clientx, *clientForServer1, *clientCmdForServer1;
+checkClient *checkClientX, *checkClientForServer1, *checkClientCmdForServer1;
 gpioThread *gpioX;
 gpioDS18B20 *gpioDS18B20X;
 dataThread *dataX;
@@ -62,6 +62,10 @@ int main(int argc, char *argv[]){
     readSettings();
     clientx->setHost(clientAddress, clientPort);
     clientForServer1->setHost(server1Address, server1Port);
+
+    clientCmdForServer1 = new Client();
+    checkClientCmdForServer1 = new checkClient(clientCmdForServer1);
+    clientCmdForServer1->setHost(server1Address, 1234);
 
     if (argc == 1){
 
@@ -111,12 +115,14 @@ int main(int argc, char *argv[]){
     QTimer *timerCClient = new QTimer();
     QObject::connect(timerCClient, SIGNAL(timeout()), checkClientX, SLOT(connect()));
     QObject::connect(timerCClient, SIGNAL(timeout()), checkClientForServer1, SLOT(connect()));
+    QObject::connect(timerCClient, SIGNAL(timeout()), checkClientCmdForServer1, SLOT(connect()));
     timerCClient->start(1000);
 
     QObject::connect(serverx, SIGNAL(readFinished()), gpioX, SLOT(enableWrite()));
     QObject::connect(gpioX, SIGNAL(gpioOpsFinished()), &startX, SLOT(runRecordData()));
     QObject::connect(gpioX, SIGNAL(gpioOpsOK()), checkClientX, SLOT(transferToTCPServer()));
     QObject::connect(clientForServer1, SIGNAL(messageGot(QByteArray)), checkClientX, SLOT(transferToTCPServer(QByteArray)));
+    QObject::connect(serverx, SIGNAL(toServer1(QByteArray)), clientCmdForServer1, SLOT(startTransfer(QByteArray)));
 
 
     // temperature reading

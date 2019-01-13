@@ -35,6 +35,10 @@ void Server::startRead(){
     while (client->bytesAvailable())
         datagram.append(client->readAll());
 
+    cout <<  datagram.data() << endl;
+    emit this->toServer1(datagram);
+
+/*
     for (int i = 0; i < gpioX->dOutSize; i++) {
         gpioX->dOutArr[i] = datagram.data()[i];
         //cout << gpioX->dOutArr[i] << ".";   //DBG
@@ -72,8 +76,7 @@ void Server::startRead(){
         }
     }
     cout << endl;
-
-    //cout <<  datagram.data() << endl;
+*/
 
     emit this->readFinished();
     //client->close();

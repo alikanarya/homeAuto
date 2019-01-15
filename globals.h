@@ -30,7 +30,17 @@ quint16 server1Port = 0;
 
 bool firstRun = true;
 
-
+// remote station 1
+extern const int dInpSize_R1 = 7;
+extern const int dOutSize_R1 = 0;
+extern const int aInpSize_R1 = 2; // Boiler Temp, Wifi Qual
+extern const int aOutSize_R1 = 0;
+int dataBufferSizeMax_R1 = 20;     // 1{A}+dInpSize+dOutSize+aInpSize*5{A+4digit}+1{Z}
+int dataBufferSizeMin_R1 = 13;     // 1{A}+dInpSize+dOutSize+aInpSize*2{A+1digit}+1{Z}
+char dInpArr_R1[dInpSize_R1+1];
+bool dInpArr_R1_bool[dInpSize_R1];
+bool dInpArr_R1_bool_prev[dInpSize_R1];
+int aInpArr_R1[aInpSize_R1];
 
 
 #endif // GLOBALS_H

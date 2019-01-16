@@ -40,6 +40,11 @@ public slots:
         gpioDS18B20X->start();
     }
 
+    void runRecordDataR1(){
+        dataX->cmdRecordDataR1 = true;
+        dataX->start();
+    }
+
 };
 
 #endif // STARTTHR_H

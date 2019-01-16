@@ -1,7 +1,7 @@
 #include "datathread.h"
 #include "gpiothread.h"
 #include "gpiods18b20.h"
-
+#include "client.h"
 
 #include <string.h>
 #include <unistd.h>
@@ -17,6 +17,11 @@ extern QString dbUser;
 extern QString dbPass;
 extern bool firstRun;
 extern gpioDS18B20 *gpioDS18B20X;
+//extern Client *clientForServer1;
+// remote station 1
+extern const int dInpSize_R1;
+extern bool dInpArr_R1_bool[];
+extern bool dInpArr_R1_bool_prev[];
 
 time_t firstTime, prevTime, currentTime;
 struct tm *prevTimeInfo, *currentTimeInfo = new tm();
@@ -137,6 +142,12 @@ void dataThread::run(){
         recordTemperature();
         cmdRecordTemperature = false;
     }
+
+    if (cmdRecordDataR1) {
+        recordDataR1();
+        cmdRecordDataR1 = false;
+    }
+
 }
 
 void dataThread::stop(){
@@ -217,6 +228,9 @@ void dataThread::recordData(){
             }
         }
 
+        if (firstRun)
+            recordDataR1();
+
     }
 
     firstRun = false;
@@ -242,6 +256,58 @@ void dataThread::recordTemperature(){
 
         if( !qry.exec() )
           qDebug() << qry.lastError();
+
+    }
+}
+
+void dataThread::recordDataR1(){
+
+    time (&currentTime);
+    currentTimeInfo = localtime (&currentTime);
+    //timeDiff = difftime(currentTime, prevTime);
+    //timeTotal = difftime(currentTime, firstTime);
+    //prevTime = currentTime;
+    timeString();
+/*
+    //cout << line;
+    cout << dateInfo << " " << timeInfo << "  ";
+    for (int i = 0; i < gpioX->dInpNum; i++)
+          cout << gpioX->dInpArr[i] << "   ";
+
+    //cout << gpioX->aInpArr[0] << " " << gpioX->aInpArr[1] << " " << gpioDS18B20X->sensor1val;
+    cout << QString::number(gpioX->aInpArr[0]/22.755555,'f',1).toUtf8().constData() << " "
+         << QString::number(gpioX->aInpArr[1]/22.755555,'f',1).toUtf8().constData() << " "
+         << QString::number(gpioDS18B20X->sensor1val,'f',1).toUtf8().constData();
+
+    cout << endl;
+*/
+    if (fileRecordEnable) {
+    }
+
+
+    if (dbRecordEnable && db.open()) {
+
+        QSqlQuery qry;
+        QString cmd;
+
+        bool state = false;
+
+        for (int i = 4; i < dInpSize_R1; i++)
+            if ( dInpArr_R1_bool[i] != dInpArr_R1_bool_prev[i] )
+                state = true;
+
+        if (state|| firstRun) {
+
+            cmd = QString( "INSERT INTO %1 (date, time, ch, dhw, flame) VALUES ('%2', '%3', %4, %5, %6)").arg(tableNames[9]).arg(dateInfo).arg(timeInfo).arg(dInpArr_R1_bool[4]).arg(dInpArr_R1_bool[5]).arg(dInpArr_R1_bool[6]);
+            //qDebug() << cmd.toUtf8().constData();
+
+            qry.prepare( cmd );
+
+            if( !qry.exec() )
+              qDebug() << qry.lastError();
+
+        }
+
 
     }
 

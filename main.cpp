@@ -43,6 +43,8 @@ bool readSettings(){
     }
 }
 
+void initVars();
+
 int main(int argc, char *argv[]){
 
     QCoreApplication app(argc, argv);
@@ -101,6 +103,7 @@ int main(int argc, char *argv[]){
 
     //cout << gpioX->PWMCHIP0_PATH.toUtf8().constData() << endl;
     //cout << gpioX->PWMCHIP1_PATH.toUtf8().constData() << endl;
+    initVars();
 
     gpioDS18B20X->ds18b20_SN1 = ds18b20_SN1;
 
@@ -123,6 +126,7 @@ int main(int argc, char *argv[]){
     QObject::connect(gpioX, SIGNAL(gpioOpsOK()), checkClientX, SLOT(transferToTCPServer()));
     QObject::connect(clientForServer1, SIGNAL(messageGot(QByteArray)), checkClientX, SLOT(transferToTCPServer(QByteArray)));
     QObject::connect(serverx, SIGNAL(toServer1(QByteArray)), clientCmdForServer1, SLOT(startTransfer(QByteArray)));
+    QObject::connect(clientForServer1, SIGNAL(messageDecrypted()), &startX, SLOT(runRecordDataR1()));
 
 
     // temperature reading
@@ -139,5 +143,18 @@ int main(int argc, char *argv[]){
     timerTemperature->start(1800000);
 
     return app.exec();
+}
+
+void initVars() {
+
+    for (int i = 0; i < dInpSize_R1; i++) dInpArr_R1[i] = '0';
+    dInpArr_R1[dInpSize_R1] = '\0';
+
+    for  (int i = 0; i < dInpSize_R1; i++) {
+        dInpArr_R1_bool[i] = false;
+        dInpArr_R1_bool_prev[i] = false;
+    }
+
+    for (int i = 0; i < aInpSize_R1; i++) aInpArr_R1[i] = 0;
 }
 

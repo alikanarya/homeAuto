@@ -16,6 +16,8 @@ public:
     ~Client();
     void setHost(QString hostAddress, quint16 hostPort);
     void start();
+    bool checkInputChange();
+
 
     QTcpSocket clientSocket;
     quint16 clientPort = 8888;
@@ -39,6 +41,7 @@ signals:
 
     void clientConnected();
     void messageGot(QByteArray);
+    void messageDecrypted();
 
 };
 

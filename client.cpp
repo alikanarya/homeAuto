@@ -141,6 +141,10 @@ void Client::readMessage() {
                 x++;
             }
         }
+
+        if ( checkInputChange() )
+            emit messageDecrypted();
+
         //cout << endl;
         //emit this->remote1IO();
     } else {
@@ -151,4 +155,13 @@ void Client::readMessage() {
     }
 
 
+}
+
+bool Client::checkInputChange(){
+
+    for (int i = 0; i < dInpSize_R1; i++)
+        if ( dInpArr_R1[i] != dInpArr_R1_bool_prev[i] )
+            return true;
+
+    return false;
 }

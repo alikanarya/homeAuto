@@ -16,12 +16,17 @@ extern QString dbName;
 extern QString dbUser;
 extern QString dbPass;
 extern bool firstRun;
+extern bool firstRunR1;
 extern gpioDS18B20 *gpioDS18B20X;
 //extern Client *clientForServer1;
 // remote station 1
 extern const int dInpSize_R1;
 extern bool dInpArr_R1_bool[];
 extern bool dInpArr_R1_bool_prev[];
+extern int aInpArr_R1[];
+extern float boilerTemp;
+extern float boilerTempPrev;
+extern float boilerTempDelta;
 
 time_t firstTime, prevTime, currentTime;
 struct tm *prevTimeInfo, *currentTimeInfo = new tm();
@@ -101,8 +106,7 @@ void dataThread::connectToDB(){
 
         qry.prepare( cmd );
 
-        if( !qry.exec() )
-          qDebug() << qry.lastError();
+        if( !qry.exec() )   qDebug() << qry.lastError();
 
 
         for (int i = 0; i < gpioX->dInpNum; i++) {
@@ -111,8 +115,7 @@ void dataThread::connectToDB(){
 
             qry.prepare( cmd );
 
-            if( !qry.exec() )
-              qDebug() << qry.lastError();
+            if( !qry.exec() )   qDebug() << qry.lastError();
 
         }
 
@@ -121,9 +124,7 @@ void dataThread::connectToDB(){
 
         qry.prepare( cmd );
 
-        if( !qry.exec() )
-          qDebug() << qry.lastError();
-
+        if( !qry.exec() )   qDebug() << qry.lastError();
 
     }
 }
@@ -228,9 +229,6 @@ void dataThread::recordData(){
             }
         }
 
-        if (firstRun)
-            recordDataR1();
-
     }
 
     firstRun = false;
@@ -290,24 +288,54 @@ void dataThread::recordDataR1(){
         QSqlQuery qry;
         QString cmd;
 
-        bool state = false;
+        if (firstRunR1) {
 
-        for (int i = 4; i < dInpSize_R1; i++)
-            if ( dInpArr_R1_bool[i] != dInpArr_R1_bool_prev[i] )
-                state = true;
-
-        if (state|| firstRun) {
-
-            cmd = QString( "INSERT INTO %1 (date, time, ch, dhw, flame) VALUES ('%2', '%3', %4, %5, %6)").arg(tableNames[9]).arg(dateInfo).arg(timeInfo).arg(dInpArr_R1_bool[4]).arg(dInpArr_R1_bool[5]).arg(dInpArr_R1_bool[6]);
-            //qDebug() << cmd.toUtf8().constData();
-
+            cmd = QString( "INSERT INTO %1 (date, time, ch, dhw, flame) VALUES ('%2', '%3', '*', '*', '*')").arg(tableNames[9]).arg(dateInfo).arg(timeInfo);
             qry.prepare( cmd );
+            if( !qry.exec() )   qDebug() << qry.lastError();
 
-            if( !qry.exec() )
-              qDebug() << qry.lastError();
+            cmd = QString( "INSERT INTO %1 (date, time, temp) VALUES ('%2', '%3', -99)").arg(tableNames[11]).arg(dateInfo).arg(timeInfo);
+            qry.prepare( cmd );
+            if( !qry.exec() )   qDebug() << qry.lastError();
 
+            firstRunR1 = false;
         }
 
+
+        // ot_status TABLE
+
+        bool state = false;
+        for (int i = 0; i <= 3; i++)
+            if ( dInpArr_R1_bool[i] != dInpArr_R1_bool_prev[i] )    state = true;
+
+        if (state) {
+            cmd = QString( "INSERT INTO %1 (date, time, success, none, invalid, timeout) VALUES ('%2', '%3', %4, %5, %6, %7)").arg(tableNames[10]).arg(dateInfo).arg(timeInfo).arg(dInpArr_R1_bool[0]).arg(dInpArr_R1_bool[1]).arg(dInpArr_R1_bool[2]).arg(dInpArr_R1_bool[3]);
+            //qDebug() << cmd.toUtf8().constData();
+            qry.prepare( cmd );
+            if( !qry.exec() )   qDebug() << qry.lastError();
+        }
+
+        // boiler_status TABLE
+
+        state = false;
+        for (int i = 4; i < dInpSize_R1; i++)
+            if ( dInpArr_R1_bool[i] != dInpArr_R1_bool_prev[i] )    state = true;
+
+        if (state) {
+            cmd = QString( "INSERT INTO %1 (date, time, ch, dhw, flame) VALUES ('%2', '%3', %4, %5, %6)").arg(tableNames[9]).arg(dateInfo).arg(timeInfo).arg(dInpArr_R1_bool[4]).arg(dInpArr_R1_bool[5]).arg(dInpArr_R1_bool[6]);
+            //qDebug() << cmd.toUtf8().constData();
+            qry.prepare( cmd );
+            if( !qry.exec() )   qDebug() << qry.lastError();
+        }
+
+        // boiler_temp TABLE
+
+        if ( abs(boilerTemp - boilerTempPrev) >= boilerTempDelta ) {
+            cmd = QString( "INSERT INTO %1 (date, time, temp) VALUES ('%2', '%3', %4)").arg(tableNames[11]).arg(dateInfo).arg(timeInfo).arg(boilerTemp);
+            //qDebug() << cmd.toUtf8().constData();
+            qry.prepare( cmd );
+            if( !qry.exec() )   qDebug() << qry.lastError();
+        }
 
     }
 

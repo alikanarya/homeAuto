@@ -29,6 +29,7 @@ QString server1Address = "";    // wemos 1
 quint16 server1Port = 0;
 
 bool firstRun = true;
+bool firstRunR1 = true; // remote station 1
 
 // remote station 1
 extern const int dInpSize_R1 = 7;
@@ -41,6 +42,12 @@ char dInpArr_R1[dInpSize_R1+1];
 bool dInpArr_R1_bool[dInpSize_R1];
 bool dInpArr_R1_bool_prev[dInpSize_R1];
 int aInpArr_R1[aInpSize_R1];
+float boilerTemp = 0;
+float boilerTempPrev = 0;
+float boilerTempDelta = 0.1;
+float boilerTempSetLow = 30;
+float boilerTempSetNormal = 35;
+float boilerTempSetHigh = 40;
 
 
 #endif // GLOBALS_H

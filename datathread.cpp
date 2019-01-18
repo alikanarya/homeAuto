@@ -24,9 +24,10 @@ extern const int dInpSize_R1;
 extern bool dInpArr_R1_bool[];
 extern bool dInpArr_R1_bool_prev[];
 extern int aInpArr_R1[];
-extern float boilerTemp;
-extern float boilerTempPrev;
-extern float boilerTempDelta;
+extern double boilerTemp;
+extern double boilerTempDB;
+extern double boilerTempPrev;
+extern double boilerTempDelta;
 
 time_t firstTime, prevTime, currentTime;
 struct tm *prevTimeInfo, *currentTimeInfo = new tm();
@@ -149,6 +150,10 @@ void dataThread::run(){
         cmdRecordDataR1 = false;
     }
 
+    if (cmdRecordBoilerTemperature) {
+        recordBoilerTemperature();
+        cmdRecordBoilerTemperature = false;
+    }
 }
 
 void dataThread::stop(){
@@ -245,16 +250,10 @@ void dataThread::recordTemperature(){
 
         QSqlQuery qry;
         QString cmd;
-
-
         cmd = QString( "INSERT INTO %1 (date, time, temp) VALUES ('%2', '%3', %4)").arg(tableNames[8]).arg(dateInfo).arg(timeInfo).arg(gpioDS18B20X->sensor1val);
         //qDebug() << cmd.toUtf8().constData();
-
         qry.prepare( cmd );
-
-        if( !qry.exec() )
-          qDebug() << qry.lastError();
-
+        if( !qry.exec() )   qDebug() << qry.lastError();
     }
 }
 
@@ -328,15 +327,22 @@ void dataThread::recordDataR1(){
             if( !qry.exec() )   qDebug() << qry.lastError();
         }
 
-        // boiler_temp TABLE
-
-        if ( abs(boilerTemp - boilerTempPrev) >= boilerTempDelta ) {
-            cmd = QString( "INSERT INTO %1 (date, time, temp) VALUES ('%2', '%3', %4)").arg(tableNames[11]).arg(dateInfo).arg(timeInfo).arg(boilerTemp);
-            //qDebug() << cmd.toUtf8().constData();
-            qry.prepare( cmd );
-            if( !qry.exec() )   qDebug() << qry.lastError();
-        }
-
     }
+}
 
+void dataThread::recordBoilerTemperature(){
+
+    time (&currentTime);
+    currentTimeInfo = localtime (&currentTime);
+    timeString();
+
+    if (dbRecordEnable && db.open()) {
+
+        QSqlQuery qry;
+        QString cmd;
+        cmd = QString( "INSERT INTO %1 (date, time, temp) VALUES ('%2', '%3', %4)").arg(tableNames[11]).arg(dateInfo).arg(timeInfo).arg(QString::number(boilerTempDB,'f',1).toFloat());
+        //qDebug() << cmd.toUtf8().constData();
+        qry.prepare( cmd );
+        if( !qry.exec() )   qDebug() << qry.lastError();
+    }
 }

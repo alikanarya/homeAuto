@@ -51,6 +51,7 @@ public:
     bool cmdRecordData = false;
     bool cmdRecordTemperature = false;
     bool cmdRecordDataR1 = false;
+    bool cmdRecordBoilerTemperature = false;
 
 
 
@@ -59,6 +60,7 @@ public slots:
     void recordData();
     void recordTemperature();
     void recordDataR1();
+    void recordBoilerTemperature();
 
 
 protected:

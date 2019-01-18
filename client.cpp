@@ -18,8 +18,10 @@ extern char dInpArr_R1[];
 extern bool dInpArr_R1_bool[];
 extern bool dInpArr_R1_bool_prev[];
 extern int aInpArr_R1[];
-extern float boilerTemp;
-extern float boilerTempPrev;
+extern double boilerTemp;
+extern double boilerTempDB;
+extern double boilerTempPrev;
+extern double boilerTempDelta;
 
 Client::Client(QObject* parent): QObject(parent){
 
@@ -138,8 +140,16 @@ void Client::readMessage() {
                 if ( x < aInpSize_R1 ) {
                     aInpArr_R1[x] = atoi(temp);
                     if (x==0) {
-                        boilerTempPrev = boilerTemp;
-                        boilerTemp = QString::number(aInpArr_R1[0]/100.0,'f',1).toFloat();
+//                        float tempt = QString::number(aInpArr_R1[0]/100.0,'f',1).toFloat();
+                        double tempt = aInpArr_R1[0]/100.0;
+                        if ( abs(tempt - boilerTempPrev) >= boilerTempDelta ) {
+                            boilerTempPrev = boilerTemp;
+                            boilerTemp = tempt;
+                            boilerTempDB = boilerTemp;
+                            emit recordBoilerTemperature();
+                        } else {
+                            boilerTemp = tempt;
+                        }
                     }
                     //cout << " " << aInpArr[x];
                 } else

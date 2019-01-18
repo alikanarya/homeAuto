@@ -42,12 +42,13 @@ char dInpArr_R1[dInpSize_R1+1];
 bool dInpArr_R1_bool[dInpSize_R1];
 bool dInpArr_R1_bool_prev[dInpSize_R1];
 int aInpArr_R1[aInpSize_R1];
-float boilerTemp = 0;
-float boilerTempPrev = 0;
-float boilerTempDelta = 0.1;
-float boilerTempSetLow = 30;
-float boilerTempSetNormal = 35;
-float boilerTempSetHigh = 40;
+double boilerTemp = 0;
+double boilerTempDB = 0;
+double boilerTempPrev = 0;
+double boilerTempDelta = 0.5;
+double boilerTempSetLow = 30;
+double boilerTempSetNormal = 35;
+double boilerTempSetHigh = 40;
 
 
 #endif // GLOBALS_H

@@ -45,6 +45,10 @@ public slots:
         dataX->start();
     }
 
+    void runRecordBoilerTemperature(){
+        dataX->cmdRecordBoilerTemperature = true;
+        dataX->start();
+    }
 };
 
 #endif // STARTTHR_H

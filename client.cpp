@@ -25,6 +25,19 @@ extern double boilerTempDelta;
 
 Client::Client(QObject* parent): QObject(parent){
 
+    int enableKeepAlive = 1;
+    int fd = clientSocket.socketDescriptor();
+    setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, &enableKeepAlive, sizeof(enableKeepAlive));
+
+    int maxIdle = 5; // seconds
+    setsockopt(fd, IPPROTO_TCP, TCP_KEEPIDLE, &maxIdle, sizeof(maxIdle));
+
+    int count = 2;  // send up to 3 keepalive packets out, then disconnect if no response
+    setsockopt(fd, SOL_TCP, TCP_KEEPCNT, &count, sizeof(count));
+
+    int interval = 2;   // send a keepalive packet out every 2 seconds (after the 5 second idle period)
+    setsockopt(fd, SOL_TCP, TCP_KEEPINTVL, &interval, sizeof(interval));
+
     connect(&clientSocket, SIGNAL(connected()), this, SLOT(connectionEstablished()));
     connect(&clientSocket, SIGNAL(readyRead()), this, SLOT(readMessage()));
 

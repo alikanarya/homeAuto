@@ -28,9 +28,17 @@ void checkClient::connect(){
         clientPtr->start();
     }
 
-    if (clientPtr->clientSocket.state() == QAbstractSocket::ConnectedState )
+    if (clientPtr->clientSocket.state() == QAbstractSocket::ConnectedState ) {
         emit Connected();
-    else
+
+        if (clientPtr->autoDisconnect) {
+            clientPtr->readCount++;
+            if ( clientPtr->readCount > 5){
+                clientPtr->clientSocket.close();
+                cout << "auto disconnect" << endl;
+            }
+        }
+    } else
         emit notConnected();
 
 }

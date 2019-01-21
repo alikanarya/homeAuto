@@ -58,6 +58,7 @@ int main(int argc, char *argv[]){
     startThr startX;
 
     clientForServer1 = new Client();
+    clientForServer1->autoDisconnect = true;
     checkClientForServer1 = new checkClient(clientForServer1);
 
     settings = new QSettings(INIFILENAME, QSettings::IniFormat);

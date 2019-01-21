@@ -29,6 +29,8 @@ public:
 
     bool connected = false;
     QByteArray datagram;
+    int readCount = 0;
+    bool autoDisconnect = false;
 
 public slots:
 

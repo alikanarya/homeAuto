@@ -94,6 +94,7 @@ void Client::readMessage() {
     while (this->clientSocket.bytesAvailable())
         datagram.append(this->clientSocket.readAll());
 
+    readCount = 0;
     cout <<  datagram.data() << endl;
     emit messageGot(datagram);
 

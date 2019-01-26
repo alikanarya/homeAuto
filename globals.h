@@ -36,8 +36,8 @@ extern const int dInpSize_R1 = 7;
 extern const int dOutSize_R1 = 0;
 extern const int aInpSize_R1 = 3; // Boiler Temp, Wifi Qual, Boiler Set Temp
 extern const int aOutSize_R1 = 0;
-int dataBufferSizeMax_R1 = 25;     // 1{A}+dInpSize+dOutSize+aInpSize*5{A+4digit}+1{Z}
-int dataBufferSizeMin_R1 = 16;     // 1{A}+dInpSize+dOutSize+aInpSize*2{A+1digit}+1{Z}
+int dataBufferSizeMax_R1 = 31;     // 1{A}+Time{hhmmss)+dInpSize+dOutSize+aInpSize*5{A+4digit}+1{Z}
+int dataBufferSizeMin_R1 = 22;     // 1{A}+Time{hhmmss)+dInpSize+dOutSize+aInpSize*2{A+1digit}+1{Z}
 char dInpArr_R1[dInpSize_R1+1];
 bool dInpArr_R1_bool[dInpSize_R1];
 bool dInpArr_R1_bool_prev[dInpSize_R1];
@@ -49,6 +49,10 @@ double boilerTempDelta = 0.5;
 double boilerTempSetLow = 30;
 double boilerTempSetNormal = 35;
 double boilerTempSetHigh = 40;
+QString rs1Hour =  "";
+QString rs1Min = "";
+QString rs1Sec = "";
+bool showIncomingMessage = false;
 
 
 #endif // GLOBALS_H

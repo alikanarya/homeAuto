@@ -3,10 +3,19 @@
 #include <QtNetwork>
 #include <iostream>
 
+#include <QThread>
+#include <QFile>
+#include <QTextStream>
+#include "mount.hpp"
+#include <termios.h>
+#include <unistd.h>
+#include <stdio.h>
 #include "globals.h"
 #include "startthr.h"
 #include "checkclient.h"
 #include "gpiods18b20.h"
+
+#define  KEY_r 114
 
 using namespace std;
 
@@ -44,6 +53,47 @@ bool readSettings(){
 }
 
 void initVars();
+
+static struct termios oldSet, newSet;
+
+KeyBrdRdr::KeyBrdRdr(void) {
+  tcgetattr( STDIN_FILENO, &oldSet );
+  newSet = oldSet;
+  newSet.c_lflag &= ~( ICANON | ECHO );
+  tcsetattr( STDIN_FILENO, TCSANOW, &newSet );
+}
+
+KeyBrdRdr::~KeyBrdRdr(void) {
+  tcsetattr( STDIN_FILENO, TCSANOW, &oldSet );
+}
+
+void KeyBrdRdr::run() {
+  while (true) {
+    char key = getchar();
+    emit KeyPressed(key);
+  }
+  return;
+}
+
+KeyBrdHndlr::KeyBrdHndlr(void) {
+  //strString = "";
+  //uiAttempts = 3;
+  kbUser = new KeyBrdRdr();
+  QObject::connect (kbUser, SIGNAL (KeyPressed(char)), this, SLOT(OnKeyPressed(char)));
+}
+
+KeyBrdHndlr::~KeyBrdHndlr(void) {
+  kbUser->exit();
+}
+
+void KeyBrdHndlr::OnKeyPressed(char cCurrent) {
+  if (int(cCurrent) == KEY_r ) {
+      showIncomingMessage = !showIncomingMessage;
+      cout << "r pressed" << endl;
+  }
+  //else    strString.append(cCurrent);
+  return;
+}
 
 int main(int argc, char *argv[]){
 
@@ -105,6 +155,9 @@ int main(int argc, char *argv[]){
     //cout << gpioX->PWMCHIP0_PATH.toUtf8().constData() << endl;
     //cout << gpioX->PWMCHIP1_PATH.toUtf8().constData() << endl;
     initVars();
+
+    KeyBrdHndlr *kbCheck = new KeyBrdHndlr();
+    kbCheck->kbUser->start();
 
     gpioDS18B20X->ds18b20_SN1 = ds18b20_SN1;
 

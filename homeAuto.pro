@@ -32,6 +32,7 @@ HEADERS += \
     datathread.h \
     startthr.h \
     checkclient.h \
-    gpiods18b20.h
+    gpiods18b20.h \
+    mount.hpp
 
 DISTFILES +=

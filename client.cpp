@@ -95,10 +95,13 @@ void Client::connectionEstablished(){
 void Client::readMessage() {
 
     datagram.clear();
-    while (this->clientSocket.bytesAvailable())
+    while (this->clientSocket.bytesAvailable() > 0) {
         datagram.append(this->clientSocket.readAll());
+        this->clientSocket.flush();
+    }
 
     readCount = 0;
+    //startTransfer(datagram);
 
     if (showIncomingMessage) cout <<  datagram.data() << endl;
 

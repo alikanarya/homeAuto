@@ -26,6 +26,8 @@ extern QString rs1Hour;
 extern QString rs1Min;
 extern QString rs1Sec;
 extern bool showIncomingMessage;
+extern int boilerTempSet;
+extern int boilerTempSetPrev;
 
 Client::Client(QObject* parent): QObject(parent){
 
@@ -171,6 +173,7 @@ void Client::readMessage() {
                 temp [j+1] = '\0';
                 if ( x < aInpSize_R1 ) {
                     aInpArr_R1[x] = atoi(temp);
+                    // Boiler Temperature
                     if (x==0) {
 //                        float tempt = QString::number(aInpArr_R1[0]/100.0,'f',1).toFloat();
                         double tempt = aInpArr_R1[0]/100.0;
@@ -178,9 +181,17 @@ void Client::readMessage() {
                             boilerTempPrev = boilerTemp;
                             boilerTemp = tempt;
                             boilerTempDB = boilerTemp;
-                            emit recordBoilerTemperature();
+                            //emit recordBoilerTemperature();
                         } else {
                             boilerTemp = tempt;
+                        }
+                    }
+                    //Boiler Set Temperature
+                    if (x==2) {
+                        boilerTempSet = aInpArr_R1[2];
+                        if (boilerTempSet != boilerTempSetPrev) {
+                            boilerTempSetPrev = boilerTempSet;
+                            emit recordBoilerSetTemperature();
                         }
                     }
                     //cout << " " << aInpArr[x];

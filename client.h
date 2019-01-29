@@ -48,6 +48,7 @@ signals:
     void messageGot(QByteArray);
     void messageDecrypted();
     void recordBoilerTemperature();
+    void recordBoilerSetTemperature();
 
 };
 

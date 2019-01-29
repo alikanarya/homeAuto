@@ -182,6 +182,7 @@ int main(int argc, char *argv[]){
     QObject::connect(serverx, SIGNAL(toServer1(QByteArray)), clientCmdForServer1, SLOT(startTransfer(QByteArray)));
     QObject::connect(clientForServer1, SIGNAL(messageDecrypted()), &startX, SLOT(runRecordDataR1()));
     QObject::connect(clientForServer1, SIGNAL(recordBoilerTemperature()), &startX, SLOT(runRecordBoilerTemperature()));
+    QObject::connect(clientForServer1, SIGNAL(recordBoilerSetTemperature()), &startX, SLOT(runRecordBoilerSetTemperature()));
 
 
     // temperature reading

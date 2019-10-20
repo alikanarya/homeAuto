@@ -54,6 +54,7 @@ bool readSettings(){
 
 void initVars();
 
+// keyboard listening functions from mount.hpp
 static struct termios oldSet, newSet;
 
 KeyBrdRdr::KeyBrdRdr(void) {
@@ -94,6 +95,7 @@ void KeyBrdHndlr::OnKeyPressed(char cCurrent) {
   //else    strString.append(cCurrent);
   return;
 }
+// ---
 
 int main(int argc, char *argv[]){
 
